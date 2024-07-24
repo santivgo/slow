@@ -2,11 +2,12 @@ create database slowdb;
 use slowdb;
 
 create table usuario(
+	id int auto_increment not null primary key,
     nome varchar(50) not null,
     endereco varchar(100) not null,
     contato varchar(200) not null,
     perfil ENUM ('admin', 'funcionario', 'cliente'),
-    cpf int primary key not null,
+    cpf int unique not null,
     status bool not null,
     login varchar(50) not null primary key,
     senha varchar(50) not null
@@ -27,9 +28,12 @@ create table midia(
 create table aluga(
 	id_aluguel int primary key auto_increment,
 	id_cli int,
+    id_func int,
     id_midia int,
     data_inicio DATE,
-    data_limite DATE
+    data_limite DATE,
+    foreign key (id_cli) references usuarios(id),
+	foreign key (id_cli) references usuarios(id)
 );
 
 create table receita(
