@@ -1,0 +1,20 @@
+INSERT into categoria values (28, 'Ação'),
+INSERT into categoria values (12, 'Aventura'),
+INSERT into categoria values (16, 'Animação'),
+INSERT into categoria values (38, 'Comédia'),
+INSERT into categoria values (80, 'Crime'),
+INSERT into categoria values (99, 'Documentário'),
+INSERT into categoria values (18, 'Drama'),
+INSERT into categoria values (10751, 'Família'),
+INSERT into categoria values (14, 'Fantasia'),
+INSERT into categoria values (36, 'História'),
+INSERT into categoria values (27, 'Terror'),
+INSERT into categoria values (10402, 'Musical'),
+INSERT into categoria values (9648, Mistério),
+INSERT into categoria values (10749, 'Romance'),
+INSERT into categoria values (878, 'Ficção Científica'),
+INSERT into categoria values (10770, 'Cinema TV'),
+INSERT into categoria values (10752, 'Guerra'),
+INSERT into categoria values (37, 'Faroeste');
+
+

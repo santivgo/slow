@@ -1,0 +1,17 @@
+INSERT into midia_categoria (id_midia, id_categoria) values (62, 878);
+INSERT into midia_categoria (id_midia, id_categoria) values (62, 9648);
+INSERT into midia_categoria (id_midia, id_categoria) values (62, 12);
+INSERT into midia_categoria (id_midia, id_categoria) values (157336, 12);
+INSERT into midia_categoria (id_midia, id_categoria) values (157336, 18);
+INSERT into midia_categoria (id_midia, id_categoria) values (157336, 878);
+INSERT into midia_categoria (id_midia, id_categoria) values (813477, 28);
+INSERT into midia_categoria (id_midia, id_categoria) values (813477, 18);
+INSERT into midia_categoria (id_midia, id_categoria) values (813477, 878);
+INSERT into midia_categoria (id_midia, id_categoria) values (37135, 10751);
+INSERT into midia_categoria (id_midia, id_categoria) values (37135, 12);
+INSERT into midia_categoria (id_midia, id_categoria) values (37135, 16);
+INSERT into midia_categoria (id_midia, id_categoria) values (37135, 18);
+INSERT into midia_categoria (id_midia, id_categoria) values (562, 28);
+INSERT into midia_categoria (id_midia, id_categoria) values (562, 53);
+INSERT into midia_categoria (id_midia, id_categoria) values (8681, 28);
+INSERT into midia_categoria (id_midia, id_categoria) values (8681, 53);
