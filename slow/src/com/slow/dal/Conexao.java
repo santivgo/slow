@@ -15,6 +15,7 @@ public class Conexao {
         String url = "jdbc:mysql://localhost:3306/slowdb";
         String user = "root";
         String password = "99586090";
+
         
         try {
             connect = DriverManager.getConnection(url, user, password);
