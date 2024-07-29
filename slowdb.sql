@@ -40,14 +40,15 @@ create table midia_categoria(
 
 
 create table aluga(
-	id_aluguel int primary key auto_increment not null,
-	id_cli int,
-    id_func int,
-    id_midia int,
+	id int unique auto_increment not null,
+	id_cli int not null,
+    id_midia int not null,
+    -- adicionar depois na tela de alugar pra 
+    -- adicionar a data do inicio e a data do fim (selecionavel pro usuario)
     data_inicio DATE,
     data_limite DATE,
+    primary key (id_cli, id_midia, id),
     foreign key (id_cli) references usuario(id_usuario),
-	foreign key (id_func) references usuario(id_usuario),
     foreign key (id_midia) references midia(id_midia)
 );
 
@@ -111,12 +112,15 @@ INSERT into categoria values (10766, 'Novela');
 INSERT into categoria values (10764, 'Reality Show');
 INSERT into categoria values (10765, 'Sci-Fi & Fantasia (seriado)');
 
-select * from midia;
-
-
+SELECT img from midia;
 insert into usuario (nome, endereco, contato, perfil, cpf, login, senha) VALUES 
 ('sant', 'ruac', '@instagram', 'admin','02209803306', 'admin',123);
 
+
 drop database slowdb;
 
-describe midia
+use slowdb;
+select * from aluga;
+
+drop table aluga;
+

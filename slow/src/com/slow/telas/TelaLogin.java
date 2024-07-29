@@ -18,6 +18,7 @@ public class TelaLogin extends javax.swing.JFrame {
     Connection conexao = null;
     PreparedStatement pst = null;
     ResultSet rs = null;
+    public static String id_usuario = null;
     
     public TelaLogin() {
         initComponents();
@@ -26,7 +27,7 @@ public class TelaLogin extends javax.swing.JFrame {
     }
     
     private void logar(){
-        String sql = "select login, senha from usuario where login=? and senha=?";
+        String sql = "select login, senha, id_usuario from usuario where login=? and senha=?";
         try {
             pst = conexao.prepareStatement(sql);
             pst.setString(1, txt_login.getText());
@@ -35,6 +36,7 @@ public class TelaLogin extends javax.swing.JFrame {
             rs = pst.executeQuery();
             
             if (rs.next()) {
+                id_usuario = rs.getString(3);
                 TelaInicial telaInicial = new TelaInicial();
                 telaInicial.setVisible(true);
                 this.dispose();
@@ -70,6 +72,8 @@ public class TelaLogin extends javax.swing.JFrame {
         txt_senha = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(860, 460));
+        setResizable(false);
         getContentPane().setLayout(null);
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/slow/icones/img_login.png"))); // NOI18N

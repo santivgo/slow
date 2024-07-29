@@ -6,7 +6,7 @@ import mysql.connector
 from mysql.connector import Error
 
 lista = ['2001 uma odisseia', 'interstellar', 'shin kamen rider',
-         'tarzan', 'die hard', 'taken']
+         'tarzan', 'die hard', 'taken', 'Fifty Shades of Grey']
 def lerBlob(diretorio):
     with open(diretorio, 'rb') as file:
         binarydata =  file.read()
@@ -52,6 +52,7 @@ def gravarMidias(info):
 
         insert = f"""INSERT into midia (id_midia, nome, filme, data_lancamento, img, adulto, sinopse, qtd_copias) values (%s, %s, %s, %s, %s, %s, %s, %s);"""
         
+        
         values = (info['id_midia'],
         info['nome'],
         info['filme'],
@@ -74,6 +75,7 @@ def pegarId():
         resul = search.results[0]
         
         movie = tmdb.Movies(resul['id']).info(language='pt-BR')
+        
                 
         info = {
             "id_midia": movie['id'],
