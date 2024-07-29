@@ -9,8 +9,11 @@ import java.awt.Toolkit;
 import com.slow.dal.Conexao;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.BorderFactory;
@@ -37,13 +40,11 @@ public class TelaInicial extends javax.swing.JFrame {
     public TelaInicial() {
         initComponents();
         conexao = Conexao.conector();
-        popular();        
+        popular();      
         jScrollPane2.setHorizontalScrollBar(null);
     }
     
-    
-    
-    private int pegarTamanho(){
+     private int pegarTamanho(){
         String sql = "select count(id_midia) from midia";
         
         try{
@@ -66,6 +67,9 @@ public class TelaInicial extends javax.swing.JFrame {
     
     private void popular(){
         String sql = "SELECT id_midia, nome, img from midia";
+        
+        int row = 0;
+        int col = 0;
         
         try{
             pst = conexao.prepareStatement(sql);
@@ -90,9 +94,9 @@ public class TelaInicial extends javax.swing.JFrame {
                 button.setBackground(new Color(255, 255, 255));
                 button.setLayout(new GridLayout(0, 1));
                 button.add(label);
-                button.setPreferredSize(new Dimension(140, 150));
-                button.setMaximumSize(new Dimension(140, 150));
-                button.setMinimumSize(new Dimension(140, 150));
+                button.setPreferredSize(new Dimension(180, 200));
+                button.setMaximumSize(new Dimension(180, 200));
+                button.setMinimumSize(new Dimension(180, 200));
                 
                 // é oq deixa feio
                 //button.setContentAreaFilled(false);
@@ -116,9 +120,13 @@ public class TelaInicial extends javax.swing.JFrame {
 
                 jPanel1.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
                 jPanel1.add(button);
+                
+                
         
             }
-            
+            jPanel1.revalidate();
+            jPanel1.repaint();
+
         }catch (Exception e){
             JOptionPane.showMessageDialog(rootPane, e);
         }
@@ -147,12 +155,14 @@ public class TelaInicial extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(610, 430));
         setResizable(false);
 
+        jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane2.setToolTipText("");
         jScrollPane2.setPreferredSize(new java.awt.Dimension(750, 430));
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setMinimumSize(new java.awt.Dimension(750, 430));
         jPanel1.setPreferredSize(new java.awt.Dimension(730, 430));
-        jPanel1.setLayout(new java.awt.GridLayout(pegarTamanho(), 4, 10, 10));
+        jPanel1.setLayout(new java.awt.GridLayout(pegarTamanho(), 4));
         jScrollPane2.setViewportView(jPanel1);
 
         jPanel2.setMinimumSize(new java.awt.Dimension(204, 430));

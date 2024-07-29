@@ -52,10 +52,6 @@ create table aluga(
     foreign key (id_midia) references midia(id_midia)
 );
 
-create table legenda(
-	id_legenda int not null UNIQUE,
-    nome_legenda varchar(50) primary key not null UNIQUE
-);
 
 create table audio(
 	id_audio int not null UNIQUE,
@@ -63,18 +59,18 @@ create table audio(
 );
 
 
-create table legenda_filme(
+create table legenda_midia(
 	id int auto_increment unique,
 	id_midia int not null,
     nome_legenda varchar(50) not null,
     
 	PRIMARY KEY (id_midia, nome_legenda),
     foreign key (id_midia) references midia (id_midia),
-	foreign key (nome_legenda) references legenda(nome_legenda)
+	foreign key (nome_legenda) references audio(nome_audio)
     
 );
 
-create table audio_filme(
+create table audio_midia(
 	id int auto_increment unique,
 	id_midia int not null,
     nome_audio varchar(50) not null,
@@ -112,15 +108,18 @@ INSERT into categoria values (10766, 'Novela');
 INSERT into categoria values (10764, 'Reality Show');
 INSERT into categoria values (10765, 'Sci-Fi & Fantasia (seriado)');
 
+INSERT INTO audio (id_audio, nome_audio) VALUES (1, 'Inglês');
+INSERT INTO audio (id_audio, nome_audio) VALUES (2, 'Português');
+INSERT INTO audio (id_audio, nome_audio) VALUES (3, 'Espanhol');
+INSERT INTO audio (id_audio, nome_audio) VALUES (4, 'Russo');
+INSERT INTO audio (id_audio, nome_audio) VALUES (5, 'Alemão');
+
 SELECT img from midia;
 insert into usuario (nome, endereco, contato, perfil, cpf, login, senha) VALUES 
 ('sant', 'ruac', '@instagram', 'admin','02209803306', 'admin',123);
 
+select lm.nome_legenda from midia m inner join legenda_midia lm on lm.id_midia = m.id_midia;
 
-drop database slowdb;
+select * from legenda_midia;
 
-use slowdb;
-select * from aluga;
-
-drop table aluga;
-
+ 

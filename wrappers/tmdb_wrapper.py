@@ -1,12 +1,51 @@
 import tmdbsimple as tmdb
-import shutil
+import random
 import requests
 from time import sleep
 import mysql.connector
 from mysql.connector import Error
 
+host="localhost"
+usr = "root"
+pwd = '99586090'
+db = 'slowdb'
+
 lista = ['2001 uma odisseia', 'interstellar', 'shin kamen rider',
-         'tarzan', 'die hard', 'taken', 'Fifty Shades of Grey']
+         'tarzan', 'die hard', 'taken', 'Fifty Shades of Grey',
+         '8 mile', 'Power Rangers', 'Mad God', 'they live',
+         'oldboy', 'home alone', 'lost in translation', 'her',
+         'about time', 'harakiri']
+
+
+
+def sortearLegendaAudio(id):
+    num = random.randint(1, 4)
+    legendas_disponiveis = ['Português', 'Inglês', 'Espanhol', 'Russo', 'Alemão']
+
+    for i in range(num):
+        try:
+            connection = mysql.connector.connect(host=host,user=usr, password=pwd, database=db)
+            cursor = connection.cursor()
+            insert = 'INSERT into legenda_midia (id_midia, nome_legenda) values (%s, %s);'
+            values = (id, legendas_disponiveis.pop(random.randint(0, len(legendas_disponiveis)-1)))
+            cursor.execute(insert, values)
+            connection.commit()
+
+            
+            legendas_disponiveis = ['Português', 'Inglês', 'Espanhol', 'Russo', 'Alemão']      
+            insert = 'INSERT into audio_midia (id_midia, nome_audio) values (%s, %s);'
+            if(i!=0):
+                values = (id, legendas_disponiveis.pop(random.randint(0, len(legendas_disponiveis)-1)))
+            else:
+                values = (id, legendas_disponiveis.pop(0))
+            cursor.execute(insert, values)
+            connection.commit()
+
+        except Exception as e:
+            print(e)
+            
+        
+
 def lerBlob(diretorio):
     with open(diretorio, 'rb') as file:
         binarydata =  file.read()
@@ -23,11 +62,6 @@ def gravarImagens(id, link):
 
 
 def gravarCategoriaMidias(idCategoria, idMidia):
-    host="localhost"
-    usr = "root"
-    pwd = '99586090'
-    db = 'slowdb'
-    
     try:
         connection = mysql.connector.connect(host=host,user=usr, password=pwd, database=db)
         cursor = connection.cursor()
@@ -41,11 +75,6 @@ def gravarCategoriaMidias(idCategoria, idMidia):
  
     
 def gravarMidias(info):
-    host="localhost"
-    usr = "root"
-    pwd = '99586090'
-    db = 'slowdb'
-    
     try:
         connection = mysql.connector.connect(host=host,user=usr, password=pwd, database=db)
         cursor = connection.cursor()
@@ -74,6 +103,7 @@ def pegarId():
         search.movie(query=item)
         resul = search.results[0]
         
+        print(resul)
         movie = tmdb.Movies(resul['id']).info(language='pt-BR')
         
                 
@@ -93,13 +123,12 @@ def pegarId():
         for categoria in info['categorias']:
             gravarCategoriaMidias(categoria['id'], info['id_midia'])
             
+        sortearLegendaAudio(info['id_midia'])
+        
         sleep(5)
         
 
     
-            
-
-
 
 tmdb.API_KEY = "8e70e2a94ddafd4d68ce3a6450319e8e"
 

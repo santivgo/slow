@@ -14,6 +14,7 @@ import javax.swing.SwingConstants;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
+import net.proteanit.sql.DbUtils;
 /**
  *
  * @author sant
@@ -25,8 +26,10 @@ public class TelaInfoMidias extends javax.swing.JFrame {
      */
     Connection conexao = null;
     PreparedStatement pst = null;
-    PreparedStatement pst2 = null;
+    PreparedStatement pstAluga = null;
     PreparedStatement pstRevert = null;
+    PreparedStatement pstLegenda = null;
+    PreparedStatement pstAudio = null;
     ResultSet rs = null;
     static int qtd_copias = 0;
     
@@ -55,12 +58,12 @@ public class TelaInfoMidias extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(rootPane, e);
         }
         
-        reverter = "REMOVE from midia_usuario where id_midia = ? and id_cli = ?";
+        reverter = "DELETE from midia_usuario where id_midia = ? and id_cli = ?";
         
         try{
             pstRevert = conexao.prepareStatement(reverter);
             pstRevert.setString(1, id_midia);
-            pstRevert.setString(1, id_usuario);
+            pstRevert.setString(2, id_usuario);
 
             
             int revertido = pstRevert.executeUpdate();
@@ -82,11 +85,11 @@ public class TelaInfoMidias extends javax.swing.JFrame {
 
             if (adicionado > 0){
                 String insert_aluga = "INSERT into aluga(id_cli, id_midia) values (?,?)";
-                pst2 = conexao.prepareStatement(insert_aluga);
-                pst2.setString(1, id_usuario);
-                pst2.setString(2, id_midia);
+                pstAluga = conexao.prepareStatement(insert_aluga);
+                pstAluga.setString(1, id_usuario);
+                pstAluga.setString(2, id_midia);
 
-                int adicionadoAluga = pst2.executeUpdate();
+                int adicionadoAluga = pstAluga.executeUpdate();
 
                 // vai ser uma funcao meio porca;
                 if (adicionadoAluga > 0){
@@ -148,13 +151,31 @@ public class TelaInfoMidias extends javax.swing.JFrame {
                     icon_adulto.setVisible(false);
                 }
                 java.util.Date format_br = new SimpleDateFormat("yyyy-dd-MM").parse(rs.getDate(5).toString());
-                txt_data_midia.setText(new SimpleDateFormat("dd/MM/yyyy").format(format_br));
-                
+                txt_data_midia.setText(new SimpleDateFormat("yyyy").format(format_br));
                 qtd_copias = rs.getInt(6);
                 txt_copias_midia.setText("Quantidade de cópias: " + qtd_copias);
 
+                String legendaPesquisa = "select lm.nome_legenda from midia m inner join legenda_midia lm on lm.id_midia = m.id_midia where m.id_midia = ?";
+                try {
+                    pstLegenda = conexao.prepareStatement(legendaPesquisa);
+                    pstLegenda.setString(1, id_midia);
+                    rs = pstLegenda.executeQuery();
+                    tbl_legendas.setModel(DbUtils.resultSetToTableModel(rs));
+                    
+                } catch (Exception e) {
+                    pnl_legenda.setEnabled(false);
+                }
                 
-                
+                String audioPesquisa = "select am.nome_audio from midia m inner join audio_midia am on am.id_midia = m.id_midia where m.id_midia = ?";
+                try {
+                    pstAudio = conexao.prepareStatement(audioPesquisa);
+                    pstAudio.setString(1, id_midia);
+                    rs = pstAudio.executeQuery();
+                    tbl_audios.setModel(DbUtils.resultSetToTableModel(rs));
+                    
+                } catch (Exception e) {
+                    pnl_legenda.setEnabled(false);
+                }
                 
                                 
                 String categoriasPesquisa = "select c.nome from midia m inner join midia_categoria mc on mc.id_midia = m.id_midia inner join categoria c on c.id_categoria = mc.id_categoria where m.id_midia = ?";
@@ -203,6 +224,11 @@ public class TelaInfoMidias extends javax.swing.JFrame {
         btn_cancelar_aluguel = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         txt_sinopse_midia = new javax.swing.JTextArea();
+        pnl_legenda = new javax.swing.JTabbedPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tbl_legendas = new javax.swing.JTable();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tbl_audios = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -248,6 +274,72 @@ public class TelaInfoMidias extends javax.swing.JFrame {
         txt_sinopse_midia.setFocusable(false);
         jScrollPane1.setViewportView(txt_sinopse_midia);
 
+        tbl_legendas.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null},
+                {null},
+                {null},
+                {null}
+            },
+            new String [] {
+                "Legendas"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(tbl_legendas);
+        if (tbl_legendas.getColumnModel().getColumnCount() > 0) {
+            tbl_legendas.getColumnModel().getColumn(0).setResizable(false);
+        }
+
+        pnl_legenda.addTab("Legendas", jScrollPane2);
+
+        tbl_audios.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null},
+                {null},
+                {null},
+                {null}
+            },
+            new String [] {
+                "Dublagem"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane3.setViewportView(tbl_audios);
+        if (tbl_audios.getColumnModel().getColumnCount() > 0) {
+            tbl_audios.getColumnModel().getColumn(0).setResizable(false);
+        }
+
+        pnl_legenda.addTab("Audio", jScrollPane3);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -255,9 +347,9 @@ public class TelaInfoMidias extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addComponent(img_midia_info, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(icon_adulto)
-                .addGap(54, 54, 54)
+                .addGap(89, 89, 89)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
@@ -267,13 +359,13 @@ public class TelaInfoMidias extends javax.swing.JFrame {
                         .addGap(20, 20, 20))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(txt_nome_midia, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addComponent(txt_copias_midia, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txt_data_midia)
                         .addContainerGap())
+                    .addComponent(txt_copias_midia, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(pnl_legenda, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                             .addComponent(txt_categoria_midia, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE))
                         .addContainerGap())))
@@ -282,27 +374,32 @@ public class TelaInfoMidias extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(19, 19, 19)
-                .addComponent(txt_nome_midia)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txt_nome_midia)
+                    .addComponent(txt_data_midia))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(img_midia_info, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(6, 6, 6)
-                        .addComponent(txt_categoria_midia)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(14, 14, 14)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txt_data_midia)
-                            .addComponent(icon_adulto))
-                        .addGap(50, 50, 50)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btn_alugar)
-                            .addComponent(btn_cancelar_aluguel))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txt_copias_midia))
-                    .addComponent(img_midia_info, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(icon_adulto)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txt_categoria_midia)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(pnl_legenda, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(8, 8, 8)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(btn_alugar)
+                                    .addComponent(btn_cancelar_aluguel))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txt_copias_midia)))))
                 .addContainerGap(37, Short.MAX_VALUE))
         );
+
+        pnl_legenda.getAccessibleContext().setAccessibleName("Formularios");
 
         setSize(new java.awt.Dimension(717, 460));
         setLocationRelativeTo(null);
@@ -310,7 +407,6 @@ public class TelaInfoMidias extends javax.swing.JFrame {
 
     private void btn_alugarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_alugarActionPerformed
         // TODO add your handling code here:
-        
         alugar();
     }//GEN-LAST:event_btn_alugarActionPerformed
 
@@ -361,6 +457,11 @@ public class TelaInfoMidias extends javax.swing.JFrame {
     private javax.swing.JLabel icon_adulto;
     private javax.swing.JLabel img_midia_info;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTabbedPane pnl_legenda;
+    private javax.swing.JTable tbl_audios;
+    private javax.swing.JTable tbl_legendas;
     private javax.swing.JLabel txt_categoria_midia;
     public static javax.swing.JLabel txt_copias_midia;
     private javax.swing.JLabel txt_data_midia;
