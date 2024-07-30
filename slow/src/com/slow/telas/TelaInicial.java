@@ -208,6 +208,7 @@ public class TelaInicial extends javax.swing.JFrame {
         btn_pesquisar = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
+        cad_usr = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -332,9 +333,9 @@ public class TelaInicial extends javax.swing.JFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txt_pesquisar_filme, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btn_pesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btn_pesquisar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txt_pesquisar_filme, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -343,10 +344,19 @@ public class TelaInicial extends javax.swing.JFrame {
                 .addGap(2, 2, 2))
         );
 
-        jMenu1.setText("File");
+        jMenu1.setText("Cadastrar");
+
+        cad_usr.setText("Usuário");
+        cad_usr.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cad_usrActionPerformed(evt);
+            }
+        });
+        jMenu1.add(cad_usr);
+
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText("Edit");
+        jMenu2.setText("Editar");
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
@@ -447,6 +457,13 @@ public class TelaInicial extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
+    private void cad_usrActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cad_usrActionPerformed
+        // TODO add your handling code here:
+        TelaCadastro tc = new TelaCadastro();
+        tc.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_cad_usrActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -486,6 +503,7 @@ public class TelaInicial extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_pesquisar;
     private javax.swing.JButton btn_usr_alugueis;
+    private javax.swing.JMenuItem cad_usr;
     private javax.swing.JLabel img_usuario;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;

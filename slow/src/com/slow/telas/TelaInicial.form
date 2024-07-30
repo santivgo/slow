@@ -6,12 +6,22 @@
       <SubComponents>
         <Menu class="javax.swing.JMenu" name="jMenu1">
           <Properties>
-            <Property name="text" type="java.lang.String" value="File"/>
+            <Property name="text" type="java.lang.String" value="Cadastrar"/>
           </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="cad_usr">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Usu&#xe1;rio"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cad_usrActionPerformed"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="jMenu2">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Edit"/>
+            <Property name="text" type="java.lang.String" value="Editar"/>
           </Properties>
         </Menu>
       </SubComponents>
@@ -230,9 +240,9 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="txt_pesquisar_filme" alignment="3" min="-2" pref="26" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="btn_pesquisar" alignment="1" min="-2" pref="26" max="-2" attributes="0"/>
+                      <Component id="txt_pesquisar_filme" min="-2" pref="26" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <Group type="102" attributes="0">
