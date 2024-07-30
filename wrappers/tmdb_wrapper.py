@@ -14,10 +14,9 @@ lista = ['2001 uma odisseia', 'interstellar', 'shin kamen rider',
          'tarzan', 'die hard', 'taken', 'Fifty Shades of Grey',
          '8 mile', 'Power Rangers', 'Mad God', 'they live',
          'oldboy', 'home alone', 'lost in translation', 'her',
-         'about time', 'harakiri']
+         'about time', 'harakiri', 'pequenos espiões']
 
-
-
+    
 def sortearLegendaAudio(id):
     num = random.randint(1, 4)
     legendas_disponiveis = ['Português', 'Inglês', 'Espanhol', 'Russo', 'Alemão']

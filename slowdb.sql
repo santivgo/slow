@@ -6,7 +6,9 @@ create table usuario(
     nome varchar(50) not null,
     endereco varchar(100) not null,
     contato varchar(200) not null,
+    data_nascimento date not null,
     perfil ENUM ('admin', 'funcionario', 'cliente'),
+	img blob,
     cpf varchar(50) unique not null,
     ativo bool DEFAULT true not null,
     login varchar(50) not null unique,
@@ -18,6 +20,7 @@ create table midia(
 	id_midia int primary key not null auto_increment,
 	nome varchar(50) not null, 
 	filme boolean not null,
+    data_inclusao DATETIME DEFAULT CURRENT_TIMESTAMP,
 	data_lancamento DATE not null,
     img longblob,
     adulto bool not null,
@@ -81,7 +84,6 @@ create table audio_midia(
     
 );
 
-
 INSERT into categoria values (28, 'Ação');
 INSERT into categoria values (12, 'Aventura');
 INSERT into categoria values (16, 'Animação');
@@ -93,6 +95,8 @@ INSERT into categoria values (10751, 'Família');
 INSERT into categoria values (14, 'Fantasia');
 INSERT into categoria values (36, 'História');
 INSERT into categoria values (27, 'Terror');
+
+
 INSERT into categoria values (53, 'Thriller');
 INSERT into categoria values (10402, 'Musical');
 INSERT into categoria values (9648, 'Mistério');
@@ -100,6 +104,7 @@ INSERT into categoria values (10749, 'Romance');
 INSERT into categoria values (878, 'Ficção Científica');
 INSERT into categoria values (10770, 'Cinema TV');
 INSERT into categoria values (10752, 'Guerra');
+
 INSERT into categoria values (37, 'Faroeste');
 INSERT into categoria values (10759, 'Ação & Aventura (seriado)');
 INSERT into categoria values (10762, 'Infântil');
@@ -115,11 +120,16 @@ INSERT INTO audio (id_audio, nome_audio) VALUES (4, 'Russo');
 INSERT INTO audio (id_audio, nome_audio) VALUES (5, 'Alemão');
 
 SELECT img from midia;
-insert into usuario (nome, endereco, contato, perfil, cpf, login, senha) VALUES 
-('sant', 'ruac', '@instagram', 'admin','02209803306', 'admin',123);
+insert into usuario (nome, endereco, contato, perfil, cpf, login, senha, data_nascimento, img) VALUES 
+('sant', 'ruac', '@instagram', 'admin','111111111', 'admin',123, '2002-09-04');
+
 
 select lm.nome_legenda from midia m inner join legenda_midia lm on lm.id_midia = m.id_midia;
 
 select * from legenda_midia;
 
+select * from midia;
+ drop database slowdb;
  
+use slowdb;
+select * from midia;
