@@ -4,6 +4,7 @@ import requests
 from time import sleep
 import mysql.connector
 from mysql.connector import Error
+import csv
 
 host="localhost"
 usr = "root"
@@ -16,6 +17,11 @@ lista = ['2001 uma odisseia', 'interstellar', 'shin kamen rider',
          'oldboy', 'home alone', 'lost in translation', 'her',
          'about time', 'harakiri', 'pequenos espiões']
 
+def abrirCsv():
+    with open('./wrappers/teste/watched.csv') as f:
+        reader = csv.DictReader(f)
+        for linha in reader:
+            lista.append(linha['Name'])
     
 def sortearLegendaAudio(id):
     num = random.randint(1, 4)
@@ -131,6 +137,6 @@ def pegarId():
 
 tmdb.API_KEY = "8e70e2a94ddafd4d68ce3a6450319e8e"
 
-
+abrirCsv()
 pegarId()
 

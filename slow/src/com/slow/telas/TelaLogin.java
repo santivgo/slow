@@ -20,6 +20,7 @@ public class TelaLogin extends javax.swing.JFrame {
     ResultSet rs = null;
     public static String id_usr = null;
     public static String nome_usr = null;
+    public static String tipo_perfil_log = null; 
     public static boolean situacao_usr = false;
     public static byte[] img_usr = null;
     
@@ -30,7 +31,7 @@ public class TelaLogin extends javax.swing.JFrame {
     }
     
     private void logar(){
-        String sql = "select login, senha, id_usuario, nome, ativo, img from usuario where login=? and senha=?";
+        String sql = "select login, senha, id_usuario, nome, ativo, img, perfil from usuario where login=? and senha=?";
         try {
             pst = conexao.prepareStatement(sql);
             pst.setString(1, txt_login.getText());
@@ -43,6 +44,8 @@ public class TelaLogin extends javax.swing.JFrame {
                 nome_usr = rs.getString(4);
                 situacao_usr = rs.getBoolean(5);
                 img_usr = rs.getBytes(6);
+                tipo_perfil_log = rs.getString(7);
+
                 
                 TelaInicial telaInicial = new TelaInicial();
                 telaInicial.setVisible(true);

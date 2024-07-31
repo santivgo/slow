@@ -26,6 +26,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
+import static com.slow.telas.TelaLogin.tipo_perfil_log;
 /**
  *
  * @author aluno
@@ -46,6 +47,7 @@ public class TelaInicial extends javax.swing.JFrame {
         conexao = Conexao.conector();
         organizarUsuario();
         iniciarPopular();
+        cad_usr.setEnabled(!tipo_perfil_log.equals("cliente"));
     }
     
     private void pesquisar(){
@@ -295,6 +297,9 @@ public class TelaInicial extends javax.swing.JFrame {
             }
         });
         txt_pesquisar_filme.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txt_pesquisar_filmeKeyReleased(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txt_pesquisar_filmeKeyTyped(evt);
             }
@@ -347,6 +352,7 @@ public class TelaInicial extends javax.swing.JFrame {
         jMenu1.setText("Cadastrar");
 
         cad_usr.setText("Usuário");
+        cad_usr.setEnabled(false);
         cad_usr.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cad_usrActionPerformed(evt);
@@ -461,8 +467,13 @@ public class TelaInicial extends javax.swing.JFrame {
         // TODO add your handling code here:
         TelaCadastro tc = new TelaCadastro();
         tc.setVisible(true);
-        this.dispose();
     }//GEN-LAST:event_cad_usrActionPerformed
+
+    private void txt_pesquisar_filmeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_pesquisar_filmeKeyReleased
+        // TODO add your handling code here:
+        
+        pesquisar();
+    }//GEN-LAST:event_txt_pesquisar_filmeKeyReleased
 
     /**
      * @param args the command line arguments
