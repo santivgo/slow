@@ -16,6 +16,11 @@ import java.awt.Color;
 import java.text.SimpleDateFormat;
 import javax.swing.JOptionPane;
 import net.proteanit.sql.DbUtils;
+import java.time.Instant;
+import java.util.Date;
+import java.time.temporal.ChronoUnit; 
+
+
 /**
  *
  * @author sant
@@ -47,9 +52,27 @@ public class TelaInfoMidias extends javax.swing.JFrame {
     }
 
     private void verificaPendencia(){
-        if (!situacao_usr || qtd_copias <= 0){
-            btn_alugar.setEnabled(false);
+        String sql = "select * from aluga where id_cli = ? and id_midia = ?";
+        
+        
+        try {
+            pst = conexao.prepareStatement(sql);
+            pst.setString(1, id_usr);
+            pst.setString(2, id_midia);
+            rs = pst.executeQuery();
+            if (rs.next()){
+                btn_alugar.setEnabled(false);
+                dt_aluguel_midia.setEnabled(false);
+                btn_cancelar_aluguel.setEnabled(true);
+            } else if (!situacao_usr || qtd_copias <= 0){
+                btn_alugar.setEnabled(false);
+            }
+            
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(rootPane, e);
         }
+        
+       
     }
     private void cancelarAluguel(){
         String reverter = "UPDATE midia set qtd_copias = qtd_copias+1 where id_midia = ?";
@@ -82,17 +105,18 @@ public class TelaInfoMidias extends javax.swing.JFrame {
         }
         
         qtd_copias +=1; 
-        txt_copias_midia.setText("Quantidade de cópias: " + qtd_copias);
-        btn_alugar.setEnabled(true);
-        btn_cancelar_aluguel.setEnabled(false);
-        
+        if(!dt_aluguel_midia.getDateFormatString().isEmpty()){
+            btn_alugar.setEnabled(true);
+            dt_aluguel_midia.setEnabled(true);
+            btn_cancelar_aluguel.setEnabled(false);
+        }
+       
         
        
         
     }
     
     private void alugar(){
-
         String sql = "UPDATE midia set qtd_copias = qtd_copias-1 where id_midia = ?";
         try{
             pst = conexao.prepareStatement(sql);
@@ -100,10 +124,13 @@ public class TelaInfoMidias extends javax.swing.JFrame {
             int adicionado = pst.executeUpdate();
 
             if (adicionado > 0){
-                String insert_aluga = "INSERT into aluga(id_cli, id_midia) values (?,?)";
+                String insert_aluga = "INSERT into aluga(id_cli, id_midia, data_inicio, data_limite) values (?,?,?,?)";
                 pstAluga = conexao.prepareStatement(insert_aluga);
                 pstAluga.setString(1, id_usr);
                 pstAluga.setString(2, id_midia);
+                pstAluga.setDate(3, new java.sql.Date(Date.from(Instant.now()).getTime()));
+                pstAluga.setDate(4, new java.sql.Date(dt_aluguel_midia.getDate().getTime()));
+                
 
                 int adicionadoAluga = pstAluga.executeUpdate();
 
@@ -117,7 +144,10 @@ public class TelaInfoMidias extends javax.swing.JFrame {
                 }
                 
                 btn_alugar.setEnabled(false);
+                dt_aluguel_midia.setEnabled(false);
+                dt_aluguel_midia.setDate(null);
                 btn_cancelar_aluguel.setEnabled(true);
+                
 
             }else{
                 JOptionPane.showMessageDialog(null, "Não foi possível alugar o filme");
@@ -245,10 +275,11 @@ public class TelaInfoMidias extends javax.swing.JFrame {
         tbl_legendas = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
         tbl_audios = new javax.swing.JTable();
+        dt_aluguel_midia = new com.toedter.calendar.JDateChooser();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
-        setPreferredSize(new java.awt.Dimension(717, 460));
         setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -274,6 +305,7 @@ public class TelaInfoMidias extends javax.swing.JFrame {
         txt_copias_midia.setText("jLabel7");
 
         btn_alugar.setText("Alugar");
+        btn_alugar.setEnabled(false);
         btn_alugar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_alugarActionPerformed(evt);
@@ -325,31 +357,48 @@ public class TelaInfoMidias extends javax.swing.JFrame {
 
         pnl_legenda.addTab("Audio", jScrollPane3);
 
+        dt_aluguel_midia.setDateFormatString("dd/mm/YYYY");
+        dt_aluguel_midia.setMaxSelectableDate(Date.from(Instant.now().plus(30, ChronoUnit.DAYS)));
+        dt_aluguel_midia.setMinSelectableDate(Date.from(Instant.now()));
+        dt_aluguel_midia.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                dt_aluguel_midiaPropertyChange(evt);
+            }
+        });
+
+        jLabel1.setText("Alugar até");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(34, 34, 34)
-                .addComponent(img_midia_info, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(8, 8, 8)
-                .addComponent(icon_adulto)
-                .addContainerGap(387, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txt_copias_midia, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(img_midia_info, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(8, 8, 8)
+                        .addComponent(icon_adulto)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btn_alugar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btn_cancelar_aluguel))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(185, 185, 185)
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(dt_aluguel_midia, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)))
+                .addGap(26, 26, 26))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
                     .addGap(389, 389, 389)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                            .addGap(0, 0, Short.MAX_VALUE)
-                            .addComponent(btn_alugar)
-                            .addGap(18, 18, 18)
-                            .addComponent(btn_cancelar_aluguel)
-                            .addGap(20, 20, 20))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                             .addComponent(txt_nome_midia, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addComponent(txt_data_midia))
-                        .addComponent(txt_copias_midia, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(pnl_legenda, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addComponent(txt_categoria_midia, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 294, Short.MAX_VALUE))
@@ -358,10 +407,25 @@ public class TelaInfoMidias extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(40, 40, 40)
+                .addGap(11, 11, 11)
+                .addComponent(txt_copias_midia)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(icon_adulto)
-                    .addComponent(img_midia_info, javax.swing.GroupLayout.PREFERRED_SIZE, 376, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(img_midia_info, javax.swing.GroupLayout.PREFERRED_SIZE, 376, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(dt_aluguel_midia, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(9, 9, 9)
+                                .addComponent(icon_adulto))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(btn_alugar)
+                                    .addComponent(btn_cancelar_aluguel))))
+                        .addGap(2, 2, 2)))
                 .addContainerGap(44, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel1Layout.createSequentialGroup()
@@ -375,13 +439,7 @@ public class TelaInfoMidias extends javax.swing.JFrame {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addComponent(pnl_legenda, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(8, 8, 8)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btn_alugar)
-                        .addComponent(btn_cancelar_aluguel))
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(txt_copias_midia)
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addContainerGap(134, Short.MAX_VALUE)))
         );
 
         pnl_legenda.getAccessibleContext().setAccessibleName("Formularios");
@@ -416,6 +474,13 @@ public class TelaInfoMidias extends javax.swing.JFrame {
         // TODO add your handling code here:
         cancelarAluguel();
     }//GEN-LAST:event_btn_cancelar_aluguelActionPerformed
+
+    private void dt_aluguel_midiaPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_dt_aluguel_midiaPropertyChange
+        // TODO add your handling code here:
+        Date selectedDate = dt_aluguel_midia.getDate();
+
+        btn_alugar.setEnabled(selectedDate != null);
+    }//GEN-LAST:event_dt_aluguel_midiaPropertyChange
 
     /**
      * @param args the command line arguments
@@ -456,8 +521,10 @@ public class TelaInfoMidias extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_alugar;
     private javax.swing.JButton btn_cancelar_aluguel;
+    private com.toedter.calendar.JDateChooser dt_aluguel_midia;
     private javax.swing.JLabel icon_adulto;
     private javax.swing.JLabel img_midia_info;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;

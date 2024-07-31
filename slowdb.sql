@@ -1,15 +1,15 @@
 create database slowdb;
 use slowdb;
-
+insert into usuario(nome, endereco, contato, data_nascimento, perfil, img, cpf, ) values ();
 create table usuario(
 	id_usuario int auto_increment not null primary key,
     nome varchar(50) not null,
-    endereco varchar(100) not null,
-    contato varchar(200) not null,
+    endereco varchar(100),
+    contato varchar(9) not null,
     data_nascimento date not null,
     perfil ENUM ('admin', 'funcionario', 'cliente'),
 	img blob,
-    cpf varchar(50) unique not null,
+    cpf varchar(11) unique not null,
     ativo bool DEFAULT true not null,
     login varchar(50) not null unique,
     senha varchar(50) not null
@@ -133,3 +133,4 @@ select * from midia;
  
 use slowdb;
 select * from midia;
+
